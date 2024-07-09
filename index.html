@@ -1,18 +1,17 @@
-<!DOCTYPE html>
 <html>
-<head>
-    <title>C</title>
-</head>
 <body>
-    <script>
-        function doSomething() {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "https://devapi.horizonnut.com/Admin/Users", true);
-            xhr.setRequestHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjIyMjg5NTIsImlzcyI6Imh0dHBzOi8vZGV2YXBpLmhvcml6b25udXQuY29tIiwiYXVkIjoiaHR0cHM6Ly9kZXZhcGkuaG9yaXpvbm51dC5jb20ifQ.x-FqXm_7zhKuV9PaQ8KejgZEg9c2xLLWe328oSScNx0");
-            xhr.send();
-        }
-        window.onload = doSomething;
-    </script>
-    <p>If you see this</p>
+<script>
+fetch('https://internal.horizonnut.com/RTT/RttApprovals', {
+  method: 'GET',
+  mode: 'cors',
+  credentials: 'include'
+})
+.then(response => response.text())
+.then(data => {
+  console.log(data);
+  document.body.innerHTML = '<pre>' + data + '</pre>';
+})
+.catch(error => console.error('Error:', error));
+</script>
 </body>
 </html>
