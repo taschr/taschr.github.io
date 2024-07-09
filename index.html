@@ -18,17 +18,22 @@ fetch('https://internal.horizonnut.com/RTT/RttApprovals', {
     mode: 'cors',
     credentials: 'include'
 })
-.then(response => response.text())
+.then(response => {
+    console.log('Response status:', response.status);
+    console.log('Response headers:', response.headers);
+    for (let [key, value] of response.headers) {
+        console.log(`${key}: ${value}`);
+    }
+    return response.text();
+})
 .then(data => {
-    console.log(data);
-    document.getElementById('responseData').textContent = data;
-    captureCookies();
+    console.log('Response body:', data);
+    document.body.innerHTML += '<pre>' + data + '</pre>';
 })
 .catch(error => {
     console.error('Error:', error);
-    document.getElementById('responseData').textContent = 'Error: ' + error;
+    document.body.innerHTML += '<p>Error: ' + error.message + '</p>';
 });
-
 window.onload = captureCookies;
 </script>
 </body>
