@@ -6,7 +6,6 @@
 <pre id="responseData"></pre>
 
 <script>
-// Attempt to capture cookies
 function captureCookies() {
     let cookieStr = document.cookie;
     document.getElementById('cookieData').innerHTML = '<strong>Captured Cookies:</strong><br>' + cookieStr;
@@ -14,7 +13,6 @@ function captureCookies() {
     document.cookie.split(';').forEach(cookie => console.log(cookie.trim()));
 }
 
-// Make the fetch request
 fetch('https://internal.horizonnut.com/RTT/RttApprovals', {
     method: 'GET',
     mode: 'cors',
